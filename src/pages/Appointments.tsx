@@ -7,12 +7,15 @@ import { Calendar, Clock, User, Plus, Filter, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import AddAppointment from '@/components/appointments/AddAppointment';
+import { toast } from '@/hooks/use-toast';
 
 const Appointments: React.FC = () => {
-  const appointments = generateMockAppointments();
+  const [appointments, setAppointments] = useState(generateMockAppointments());
   const [filter, setFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [dateFilter, setDateFilter] = useState<string>('all');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -74,6 +77,25 @@ const Appointments: React.FC = () => {
     return true;
   });
 
+  const handleAddAppointment = (newAppointment: any) => {
+    setAppointments([newAppointment, ...appointments]);
+  };
+
+  const handleStatusChange = (appointmentId: string, newStatus: string) => {
+    setAppointments(
+      appointments.map(appointment => 
+        appointment._id === appointmentId 
+          ? { ...appointment, status: newStatus } 
+          : appointment
+      )
+    );
+    
+    toast({
+      title: "Status updated",
+      description: `Appointment ${newStatus}`,
+    });
+  };
+
   return (
     <DashboardLayout title="Appointments">
       <div className="space-y-6">
@@ -122,7 +144,10 @@ const Appointments: React.FC = () => {
               </Button>
             </div>
             
-            <Button className="bg-pink-600 hover:bg-pink-700">
+            <Button 
+              className="bg-pink-600 hover:bg-pink-700"
+              onClick={() => setIsAddModalOpen(true)}
+            >
               <Plus size={16} className="mr-2" />
               New Appointment
             </Button>
@@ -235,8 +260,27 @@ const Appointments: React.FC = () => {
                           Details
                         </button>
                         {appointment.status === 'pending' && (
-                          <button className="text-green-600 hover:text-green-800 transition-colors text-sm font-medium">
+                          <button 
+                            className="text-green-600 hover:text-green-800 transition-colors text-sm font-medium"
+                            onClick={() => handleStatusChange(appointment._id, 'confirmed')}
+                          >
                             Confirm
+                          </button>
+                        )}
+                        {appointment.status === 'confirmed' && (
+                          <button 
+                            className="text-blue-600 hover:text-blue-800 transition-colors text-sm font-medium"
+                            onClick={() => handleStatusChange(appointment._id, 'completed')}
+                          >
+                            Complete
+                          </button>
+                        )}
+                        {(appointment.status === 'pending' || appointment.status === 'confirmed') && (
+                          <button 
+                            className="text-red-600 hover:text-red-800 transition-colors text-sm font-medium"
+                            onClick={() => handleStatusChange(appointment._id, 'cancelled')}
+                          >
+                            Cancel
                           </button>
                         )}
                       </div>
@@ -257,6 +301,12 @@ const Appointments: React.FC = () => {
           )}
         </div>
       </div>
+
+      <AddAppointment 
+        open={isAddModalOpen} 
+        onClose={() => setIsAddModalOpen(false)} 
+        onSave={handleAddAppointment}
+      />
     </DashboardLayout>
   );
 };

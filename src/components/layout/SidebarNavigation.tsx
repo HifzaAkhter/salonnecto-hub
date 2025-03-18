@@ -49,13 +49,13 @@ const SidebarNavigation = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleS
       <div className="flex items-center justify-between h-16 px-4 border-b">
         {isOpen ? (
           <Link to="/dashboard" className="flex items-center space-x-2">
-            <span className="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-500">
+            <span className="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-pink-400">
               SalonSphere
             </span>
           </Link>
         ) : (
           <div className="w-full flex justify-center">
-            <Link to="/dashboard" className="text-blue-500 font-bold">
+            <Link to="/dashboard" className="text-pink-600 font-bold">
               S
             </Link>
           </div>
@@ -84,7 +84,7 @@ const SidebarNavigation = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleS
                   className={cn(
                     "flex items-center px-3 py-2 rounded-lg transition-all group",
                     isActive
-                      ? "bg-blue-50 text-blue-600"
+                      ? "bg-pink-50 text-pink-600"
                       : "text-gray-700 hover:bg-gray-100"
                   )}
                 >
@@ -109,8 +109,8 @@ const SidebarNavigation = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleS
       <div className="p-4 border-t">
         {isOpen ? (
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-              <span className="text-blue-600 font-medium">SA</span>
+            <div className="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center">
+              <span className="text-pink-600 font-medium">SA</span>
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-gray-900 truncate">Salon Admin</p>
@@ -119,8 +119,8 @@ const SidebarNavigation = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleS
           </div>
         ) : (
           <div className="flex justify-center">
-            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-              <span className="text-blue-600 font-medium">SA</span>
+            <div className="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center">
+              <span className="text-pink-600 font-medium">SA</span>
             </div>
           </div>
         )}
