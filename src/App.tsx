@@ -15,7 +15,9 @@ import Reviews from "./pages/Reviews";
 import Portfolio from "./pages/Portfolio";
 import Analytics from "./pages/Analytics";
 import Orders from "./pages/Orders";
+import ProductOrders from "./pages/ProductOrders";
 import Commission from "./pages/Commission";
+import CommissionPayouts from "./pages/CommissionPayouts";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -39,7 +41,9 @@ const App = () => (
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/orders" element={<Orders />} />
+          <Route path="/product-orders" element={<ProductOrders />} />
           <Route path="/commission" element={<Commission />} />
+          <Route path="/commission-payouts" element={<CommissionPayouts />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
