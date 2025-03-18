@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { generateMockAppointments } from '@/models/types';
@@ -9,9 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import AddAppointment from '@/components/appointments/AddAppointment';
 import { toast } from '@/hooks/use-toast';
+import { Appointment } from '@/models/types';
 
 const Appointments: React.FC = () => {
-  const [appointments, setAppointments] = useState(generateMockAppointments());
+  const [appointments, setAppointments] = useState<Appointment[]>(generateMockAppointments());
   const [filter, setFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [dateFilter, setDateFilter] = useState<string>('all');
@@ -77,11 +77,11 @@ const Appointments: React.FC = () => {
     return true;
   });
 
-  const handleAddAppointment = (newAppointment: any) => {
+  const handleAddAppointment = (newAppointment: Appointment) => {
     setAppointments([newAppointment, ...appointments]);
   };
 
-  const handleStatusChange = (appointmentId: string, newStatus: string) => {
+  const handleStatusChange = (appointmentId: string, newStatus: 'pending' | 'confirmed' | 'cancelled' | 'completed') => {
     setAppointments(
       appointments.map(appointment => 
         appointment._id === appointmentId 

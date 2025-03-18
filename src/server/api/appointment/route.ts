@@ -57,7 +57,8 @@ export async function GET(req: NextRequest) {
     const appointments = await Appointment.find(query)
       .populate('customer', 'name email')
       .populate('service')
-      .sort({ startTime: 1 });
+      .sort({ startTime: 1 })
+      .exec();
     
     return NextResponse.json(appointments);
   } catch (error) {
@@ -86,7 +87,7 @@ export async function POST(req: NextRequest) {
     const { customer, salon, service, startTime, notes } = body;
     
     // If salon admin creating appointment, validate it's for their salon
-    if (session.user.role === 'salon_admin' && session.user.salon.toString() !== salon) {
+    if (session.user.role === 'salon_admin' && session.user.salon?.toString() !== salon) {
       return NextResponse.json(
         { error: 'Unauthorized to create appointments for this salon' },
         { status: 403 }
@@ -94,7 +95,7 @@ export async function POST(req: NextRequest) {
     }
     
     // If customer creating appointment, validate it's for them
-    if (session.user.role === 'customer' && session.user._id.toString() !== customer) {
+    if (session.user.role === 'customer' && session.user._id?.toString() !== customer) {
       return NextResponse.json(
         { error: 'Unauthorized to create appointments for other customers' },
         { status: 403 }
@@ -102,7 +103,7 @@ export async function POST(req: NextRequest) {
     }
     
     // Get service to calculate endTime
-    const serviceData = await Service.findById(service);
+    const serviceData = await Service.findById(service).exec();
     
     if (!serviceData) {
       return NextResponse.json(
@@ -116,7 +117,7 @@ export async function POST(req: NextRequest) {
     const endDateTime = new Date(startTime);
     endDateTime.setMinutes(endDateTime.getMinutes() + serviceData.duration);
     
-    const appointment = await Appointment.create({
+    const appointment = new Appointment({
       customer,
       salon,
       service,
@@ -125,6 +126,8 @@ export async function POST(req: NextRequest) {
       notes,
       status: session.user.role === 'salon_admin' ? 'confirmed' : 'pending'
     });
+    
+    await appointment.save();
     
     return NextResponse.json(appointment, { status: 201 });
   } catch (error) {

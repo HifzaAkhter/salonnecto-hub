@@ -22,7 +22,7 @@ export const authOptions: NextAuthOptions = {
 
         await dbConnect();
 
-        const user = await User.findOne({ email: credentials.email });
+        const user = await User.findOne({ email: credentials.email }).exec();
 
         if (!user) {
           return null;
@@ -40,6 +40,7 @@ export const authOptions: NextAuthOptions = {
           name: user.name,
           role: user.role,
           salon: user.salon?.toString(),
+          _id: user._id.toString(),
         };
       },
     },
@@ -51,6 +52,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token._id = user.id;
         token.role = user.role;
         token.salon = user.salon;
       }
@@ -59,7 +61,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (token) {
         session.user._id = token.id;
-        session.user.role = token.role;
+        session.user.role = token.role as 'admin' | 'salon_admin' | 'customer';
         session.user.salon = token.salon;
       }
       return session;

@@ -23,9 +23,11 @@ export async function GET(
     await dbConnect();
     
     const appointmentId = params.id;
+    // Use exec() to properly resolve the mongoose query
     const appointment = await Appointment.findById(appointmentId)
       .populate('customer', 'name email')
-      .populate('service');
+      .populate('service')
+      .exec();
     
     if (!appointment) {
       return NextResponse.json(
@@ -36,7 +38,7 @@ export async function GET(
     
     // Check permissions
     if (session.user.role === 'salon_admin' && 
-        appointment.salon.toString() !== session.user.salon.toString()) {
+        appointment.salon.toString() !== session.user.salon?.toString()) {
       return NextResponse.json(
         { error: 'Unauthorized to view this appointment' },
         { status: 403 }
@@ -44,7 +46,7 @@ export async function GET(
     }
     
     if (session.user.role === 'customer' && 
-        appointment.customer._id.toString() !== session.user._id.toString()) {
+        appointment.customer._id.toString() !== session.user._id?.toString()) {
       return NextResponse.json(
         { error: 'Unauthorized to view this appointment' },
         { status: 403 }
@@ -81,7 +83,7 @@ export async function PUT(
     const body = await req.json();
     
     // Find the appointment first
-    const appointment = await Appointment.findById(appointmentId);
+    const appointment = await Appointment.findById(appointmentId).exec();
     
     if (!appointment) {
       return NextResponse.json(
@@ -92,7 +94,7 @@ export async function PUT(
     
     // Check permissions
     if (session.user.role === 'salon_admin' && 
-        appointment.salon.toString() !== session.user.salon.toString()) {
+        appointment.salon.toString() !== session.user.salon?.toString()) {
       return NextResponse.json(
         { error: 'Unauthorized to update this appointment' },
         { status: 403 }
@@ -100,7 +102,7 @@ export async function PUT(
     }
     
     if (session.user.role === 'customer' && 
-        appointment.customer.toString() !== session.user._id.toString()) {
+        appointment.customer.toString() !== session.user._id?.toString()) {
       return NextResponse.json(
         { error: 'Unauthorized to update this appointment' },
         { status: 403 }
@@ -109,7 +111,7 @@ export async function PUT(
     
     // If changing service, recalculate end time
     if (body.service && body.service !== appointment.service.toString()) {
-      const service = await Service.findById(body.service);
+      const service = await Service.findById(body.service).exec();
       
       if (!service) {
         return NextResponse.json(
@@ -125,7 +127,7 @@ export async function PUT(
       body.endTime = endTime;
     } else if (body.startTime) {
       // If only changing start time, recalculate end time based on existing service
-      const service = await Service.findById(appointment.service);
+      const service = await Service.findById(appointment.service).exec();
       const startTime = new Date(body.startTime);
       const endTime = new Date(startTime);
       endTime.setMinutes(endTime.getMinutes() + service.duration);
@@ -140,7 +142,8 @@ export async function PUT(
       { new: true, runValidators: true }
     )
       .populate('customer', 'name email')
-      .populate('service');
+      .populate('service')
+      .exec();
     
     return NextResponse.json(updatedAppointment);
   } catch (error) {
@@ -171,7 +174,7 @@ export async function DELETE(
     const appointmentId = params.id;
     
     // Find the appointment first
-    const appointment = await Appointment.findById(appointmentId);
+    const appointment = await Appointment.findById(appointmentId).exec();
     
     if (!appointment) {
       return NextResponse.json(
@@ -182,7 +185,7 @@ export async function DELETE(
     
     // Check permissions
     if (session.user.role === 'salon_admin' && 
-        appointment.salon.toString() !== session.user.salon.toString()) {
+        appointment.salon.toString() !== session.user.salon?.toString()) {
       return NextResponse.json(
         { error: 'Unauthorized to delete this appointment' },
         { status: 403 }
@@ -190,14 +193,14 @@ export async function DELETE(
     }
     
     if (session.user.role === 'customer' && 
-        appointment.customer.toString() !== session.user._id.toString()) {
+        appointment.customer.toString() !== session.user._id?.toString()) {
       return NextResponse.json(
         { error: 'Unauthorized to delete this appointment' },
         { status: 403 }
       );
     }
     
-    await Appointment.findByIdAndDelete(appointmentId);
+    await Appointment.findByIdAndDelete(appointmentId).exec();
     
     return NextResponse.json(
       { message: 'Appointment deleted successfully' },
