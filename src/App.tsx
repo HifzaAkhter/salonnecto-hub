@@ -20,6 +20,7 @@ import Commission from "./pages/Commission";
 import CommissionPayouts from "./pages/CommissionPayouts";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import SuperAdminDashboard from "./pages/SuperAdminDashboard";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ const App = () => (
           <Route path="/commission" element={<Commission />} />
           <Route path="/commission-payouts" element={<CommissionPayouts />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/super-admin" element={<SuperAdminDashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
