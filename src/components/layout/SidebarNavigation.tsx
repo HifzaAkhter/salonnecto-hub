@@ -1,0 +1,140 @@
+
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { 
+  LayoutDashboard, 
+  Scissors, 
+  ShoppingBag, 
+  Calendar, 
+  Star, 
+  Image, 
+  BarChart, 
+  Package, 
+  DollarSign, 
+  Settings,
+  ChevronLeft,
+  LogOut
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+type NavItem = {
+  title: string;
+  path: string;
+  icon: React.ReactNode;
+};
+
+const SidebarNavigation = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: () => void }) => {
+  const location = useLocation();
+  
+  const navItems: NavItem[] = [
+    { title: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={20} /> },
+    { title: 'Services', path: '/services', icon: <Scissors size={20} /> },
+    { title: 'Products', path: '/products', icon: <ShoppingBag size={20} /> },
+    { title: 'Appointments', path: '/appointments', icon: <Calendar size={20} /> },
+    { title: 'Reviews', path: '/reviews', icon: <Star size={20} /> },
+    { title: 'Portfolio', path: '/portfolio', icon: <Image size={20} /> },
+    { title: 'Analytics', path: '/analytics', icon: <BarChart size={20} /> },
+    { title: 'Orders', path: '/orders', icon: <Package size={20} /> },
+    { title: 'Commission', path: '/commission', icon: <DollarSign size={20} /> },
+    { title: 'Settings', path: '/settings', icon: <Settings size={20} /> },
+  ];
+
+  return (
+    <aside
+      className={cn(
+        "fixed inset-y-0 left-0 z-50 flex flex-col bg-white border-r border-gray-200 shadow-sm transition-all duration-300 ease-in-out",
+        isOpen ? "w-64" : "w-0 md:w-16"
+      )}
+    >
+      <div className="flex items-center justify-between h-16 px-4 border-b">
+        {isOpen ? (
+          <Link to="/dashboard" className="flex items-center space-x-2">
+            <span className="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-500">
+              SalonSphere
+            </span>
+          </Link>
+        ) : (
+          <div className="w-full flex justify-center">
+            <Link to="/dashboard" className="text-blue-500 font-bold">
+              S
+            </Link>
+          </div>
+        )}
+        
+        <button
+          onClick={toggleSidebar}
+          className="p-1 rounded-full hover:bg-gray-100 transition-colors md:flex hidden"
+        >
+          <ChevronLeft
+            size={18}
+            className={cn("text-gray-500 transition-transform", !isOpen && "rotate-180")}
+          />
+        </button>
+      </div>
+
+      <nav className="flex-1 py-4 overflow-y-auto">
+        <ul className="space-y-1 px-2">
+          {navItems.map((item) => {
+            const isActive = location.pathname === item.path;
+            
+            return (
+              <li key={item.path}>
+                <Link
+                  to={item.path}
+                  className={cn(
+                    "flex items-center px-3 py-2 rounded-lg transition-all group",
+                    isActive
+                      ? "bg-blue-50 text-blue-600"
+                      : "text-gray-700 hover:bg-gray-100"
+                  )}
+                >
+                  <span className="flex items-center justify-center">{item.icon}</span>
+                  
+                  {isOpen && (
+                    <span className="ml-3 font-medium text-sm">{item.title}</span>
+                  )}
+                  
+                  {!isOpen && (
+                    <span className="absolute left-full ml-6 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity invisible md:visible z-50">
+                      {item.title}
+                    </span>
+                  )}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+
+      <div className="p-4 border-t">
+        {isOpen ? (
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+              <span className="text-blue-600 font-medium">SA</span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900 truncate">Salon Admin</p>
+              <p className="text-xs text-gray-500 truncate">admin@salon.com</p>
+            </div>
+          </div>
+        ) : (
+          <div className="flex justify-center">
+            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+              <span className="text-blue-600 font-medium">SA</span>
+            </div>
+          </div>
+        )}
+
+        <button className={cn(
+          "mt-4 flex items-center justify-center w-full text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg py-2 transition-colors",
+          isOpen ? "px-3" : "px-0"
+        )}>
+          <LogOut size={18} />
+          {isOpen && <span className="ml-2 text-sm">Logout</span>}
+        </button>
+      </div>
+    </aside>
+  );
+};
+
+export default SidebarNavigation;
